@@ -12,6 +12,7 @@ import Members from "./pages/library/members/Members";
 import Transactions from "./pages/library/transactions/Transactions";
 import ImportBooks from "./pages/library/books/ImportBooks";
 import Library from "./pages/library/Library";
+import Users from "./pages/library/users/Users";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/members" element={<Members />} />
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/import" element={<ImportBooks />} />
+          <Route path="/users" element={<Users />} />
         </Routes>
       </main>
     </Router>

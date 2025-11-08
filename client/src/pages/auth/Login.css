@@ -26,6 +26,11 @@
   color: #ffffff;
 }
 
+.login-subtitle-error {
+  margin-top: 10px;
+  color: #ff4d4f;
+}
+
 .login-form {
   margin-top: 20px;
   display: flex;

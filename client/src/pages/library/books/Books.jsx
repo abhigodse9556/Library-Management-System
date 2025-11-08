@@ -5,8 +5,9 @@ import {
   updateBook,
   deleteBook,
   searchBooks,
-} from "../../../services/api";
+} from "../../../services/bookApi";
 import "./Books.css";
+import Navbar from "../../../components/Navbar";
 
 const Books = () => {
   const [books, setBooks] = useState([]);
@@ -37,6 +38,7 @@ const Books = () => {
       setLoading(true);
       setError("");
       const data = await getBooks();
+      console.log("Fetched books data:", data);
       setBooks(Array.isArray(data) ? data : data.results || []);
     } catch (err) {
       setError(err.message);
@@ -136,219 +138,222 @@ const Books = () => {
   };
 
   return (
-    <div className="books-container">
-      <div className="page-header">
-        <h1>Books Management</h1>
-        <button className="btn btn-primary" onClick={() => handleOpenModal()}>
-          Add New Book
-        </button>
-      </div>
-
-      <div className="search-section">
-        <div className="search-inputs">
-          <input
-            type="text"
-            placeholder="Search by title"
-            value={searchTitle}
-            onChange={(e) => setSearchTitle(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="Search by author"
-            value={searchAuthor}
-            onChange={(e) => setSearchAuthor(e.target.value)}
-          />
-          <button className="btn btn-secondary" onClick={handleSearch}>
-            Search
-          </button>
-          <button className="btn btn-outline" onClick={handleReset}>
-            Reset
+    <>
+      <Navbar />
+      <div className="books-container">
+        <div className="page-header">
+          <h1>Books Management</h1>
+          <button className="btn btn-primary" onClick={() => handleOpenModal()}>
+            Add New Book
           </button>
         </div>
-      </div>
 
-      {error && <div className="error-message">{error}</div>}
+        <div className="search-section">
+          <div className="search-inputs">
+            <input
+              type="text"
+              placeholder="Search by title"
+              value={searchTitle}
+              onChange={(e) => setSearchTitle(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Search by author"
+              value={searchAuthor}
+              onChange={(e) => setSearchAuthor(e.target.value)}
+            />
+            <button className="btn btn-secondary" onClick={handleSearch}>
+              Search
+            </button>
+            <button className="btn btn-outline" onClick={handleReset}>
+              Reset
+            </button>
+          </div>
+        </div>
 
-      {loading ? (
-        <div className="loading">Loading books...</div>
-      ) : (
-        <div className="books-table-container">
-          <table className="books-table">
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Authors</th>
-                <th>ISBN</th>
-                <th>Publisher</th>
-                <th>Stock</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {books.length === 0 ? (
+        {error && <div className="error-message">{error}</div>}
+
+        {loading ? (
+          <div className="loading">Loading books...</div>
+        ) : (
+          <div className="books-table-container">
+            <table className="books-table">
+              <thead>
                 <tr>
-                  <td colSpan="6" className="no-data">
-                    No books found
-                  </td>
+                  <th>Title</th>
+                  <th>Authors</th>
+                  <th>ISBN</th>
+                  <th>Publisher</th>
+                  <th>Stock</th>
+                  <th>Actions</th>
                 </tr>
-              ) : (
-                books.map((book) => (
-                  <tr key={book.id}>
-                    <td>{book.title}</td>
-                    <td>{book.authors}</td>
-                    <td>{book.isbn || "-"}</td>
-                    <td>{book.publisher || "-"}</td>
-                    <td>{book.stock}</td>
-                    <td>
-                      <button
-                        className="btn btn-sm btn-edit"
-                        onClick={() => handleOpenModal(book)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="btn btn-sm btn-delete"
-                        onClick={() => handleDelete(book.id)}
-                      >
-                        Delete
-                      </button>
+              </thead>
+              <tbody>
+                {books.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="no-data">
+                      No books found
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      )}
+                ) : (
+                  books.map((book) => (
+                    <tr key={book.id}>
+                      <td>{book.title}</td>
+                      <td>{book.authors}</td>
+                      <td>{book.isbn || "-"}</td>
+                      <td>{book.publisher || "-"}</td>
+                      <td>{book.stock}</td>
+                      <td>
+                        <button
+                          className="btn btn-sm btn-edit"
+                          onClick={() => handleOpenModal(book)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="btn btn-sm btn-delete"
+                          onClick={() => handleDelete(book.id)}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
 
-      {showModal && (
-        <div className="modal-overlay" onClick={handleCloseModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h2>{editingBook ? "Edit Book" : "Add New Book"}</h2>
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label>Title *</label>
-                <input
-                  type="text"
-                  value={formData.title}
-                  onChange={(e) =>
-                    setFormData({ ...formData, title: e.target.value })
-                  }
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Authors *</label>
-                <input
-                  type="text"
-                  value={formData.authors}
-                  onChange={(e) =>
-                    setFormData({ ...formData, authors: e.target.value })
-                  }
-                  required
-                />
-              </div>
-              <div className="form-row">
+        {showModal && (
+          <div className="modal-overlay" onClick={handleCloseModal}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <h2>{editingBook ? "Edit Book" : "Add New Book"}</h2>
+              <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                  <label>ISBN</label>
+                  <label>Title *</label>
                   <input
                     type="text"
-                    value={formData.isbn}
+                    value={formData.title}
                     onChange={(e) =>
-                      setFormData({ ...formData, isbn: e.target.value })
-                    }
-                  />
-                </div>
-                <div className="form-group">
-                  <label>ISBN13</label>
-                  <input
-                    type="text"
-                    value={formData.isbn13}
-                    onChange={(e) =>
-                      setFormData({ ...formData, isbn13: e.target.value })
-                    }
-                  />
-                </div>
-              </div>
-              <div className="form-group">
-                <label>Publisher</label>
-                <input
-                  type="text"
-                  value={formData.publisher}
-                  onChange={(e) =>
-                    setFormData({ ...formData, publisher: e.target.value })
-                  }
-                />
-              </div>
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Publication Date</label>
-                  <input
-                    type="text"
-                    value={formData.publication_date}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        publication_date: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Pages</label>
-                  <input
-                    type="number"
-                    value={formData.num_pages}
-                    onChange={(e) =>
-                      setFormData({ ...formData, num_pages: e.target.value })
-                    }
-                  />
-                </div>
-              </div>
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Language</label>
-                  <input
-                    type="text"
-                    value={formData.language_code}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        language_code: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Stock *</label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={formData.stock}
-                    onChange={(e) =>
-                      setFormData({ ...formData, stock: e.target.value })
+                      setFormData({ ...formData, title: e.target.value })
                     }
                     required
                   />
                 </div>
-              </div>
-              <div className="modal-actions">
-                <button type="submit" className="btn btn-primary">
-                  {editingBook ? "Update" : "Create"}
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-outline"
-                  onClick={handleCloseModal}
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
+                <div className="form-group">
+                  <label>Authors *</label>
+                  <input
+                    type="text"
+                    value={formData.authors}
+                    onChange={(e) =>
+                      setFormData({ ...formData, authors: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>ISBN</label>
+                    <input
+                      type="text"
+                      value={formData.isbn}
+                      onChange={(e) =>
+                        setFormData({ ...formData, isbn: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>ISBN13</label>
+                    <input
+                      type="text"
+                      value={formData.isbn13}
+                      onChange={(e) =>
+                        setFormData({ ...formData, isbn13: e.target.value })
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label>Publisher</label>
+                  <input
+                    type="text"
+                    value={formData.publisher}
+                    onChange={(e) =>
+                      setFormData({ ...formData, publisher: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Publication Date</label>
+                    <input
+                      type="text"
+                      value={formData.publication_date}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          publication_date: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Pages</label>
+                    <input
+                      type="number"
+                      value={formData.num_pages}
+                      onChange={(e) =>
+                        setFormData({ ...formData, num_pages: e.target.value })
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Language</label>
+                    <input
+                      type="text"
+                      value={formData.language_code}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          language_code: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Stock *</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={formData.stock}
+                      onChange={(e) =>
+                        setFormData({ ...formData, stock: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="modal-actions">
+                  <button type="submit" className="btn btn-primary">
+                    {editingBook ? "Update" : "Create"}
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-outline"
+                    onClick={handleCloseModal}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
 };
 

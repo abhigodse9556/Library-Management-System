@@ -1,6 +1,37 @@
 from django.contrib import admin
-from .models import Book, Member, Transaction
+from .models import User, Book, Member, Transaction
 
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('userName', 'firstName', 'lastName', 'userRole', 'emailID', 'mobileNo')
+    search_fields = ('userName', 'firstName', 'lastName', 'emailID', 'mobileNo')
+    list_filter = ('userRole', 'gender', 'currentCity', 'currentState')
+    ordering = ('-created_at',)
+    
+    fieldsets = (
+        ('Login Information', {
+            'fields': ('userName', 'password', 'userRole')
+        }),
+        ('Personal Information', {
+            'fields': ('firstName', 'lastName', 'gender', 'dateOfBirth', 'qualification')
+        }),
+        ('Contact Information', {
+            'fields': ('mobileNo', 'alternateMobileNo', 'emailID', 'alternateEmailID')
+        }),
+        ('Current Address', {
+            'fields': ('currentAddressLine1', 'currentAddressLine2', 'currentStreet', 
+                      'currentArea', 'currentCity', 'currentState', 'currentZip', 
+                      'currentCountry', 'isCurrentAddressPermanent')
+        }),
+        ('Permanent Address', {
+            'fields': ('permanentAddressLine1', 'permanentAddressLine2', 'permanentStreet',
+                      'permanentArea', 'permanentCity', 'permanentState', 'permanentZip',
+                      'permanentCountry')
+        }),
+        ('Additional Information', {
+            'fields': ('joiningDate', 'notes', 'lastLogin')
+        })
+    )
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
