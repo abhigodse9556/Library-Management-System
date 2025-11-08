@@ -4,7 +4,7 @@ import {
   createMember,
   updateMember,
   deleteMember,
-} from "../services/api";
+} from "../../../services/api";
 import "./Members.css";
 
 const Members = () => {
